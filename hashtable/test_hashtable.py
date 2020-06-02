@@ -19,6 +19,11 @@ class TestHashTable(unittest.TestCase):
         ht.put("key-8", "val-8")
         ht.put("key-9", "val-9")
 
+        # current = ht.contents[0].head
+        # while current.next is not None:
+        #     print(current.value) 
+        #     current = current.next
+
         return_value = ht.get("key-0")
         self.assertTrue(return_value == "val-0")
         return_value = ht.get("key-1")

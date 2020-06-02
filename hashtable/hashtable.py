@@ -6,10 +6,55 @@ class HashTableEntry:
         self.key = key
         self.value = value
         self.next = None
+    
+    def __repr__(self):
+        return f'HashTableEntry({repr(self.key)}, {repr(self.value)})'
 
 
 # Hash table can't have fewer than this many slots
 MIN_CAPACITY = 8
+
+class LinkedList:
+    def __init__(self):
+        self.head = None
+
+    def insert_at_head(self,node):
+        node.next = self.head
+        self.head = node
+        return self.head.value
+
+    def find(self, key):
+        current = self.head
+        # look until the end
+        while current is not None:
+            # is the current value the one we want? If yes, return the current node
+            if current.key == key:
+                return current
+            current = current.next
+        
+        return None
+
+    def delete(self, key):
+        current = self.head
+
+        # special case of deleting the head of the list
+        if current.key == key:
+            self.head = self.head.next
+            return current
+        
+        # general case
+        previous = current
+        current = current.next
+
+        while current is not None:
+            if current.key == key:
+                previous.next = current.next # cuts old node out of sll
+                return current.value
+            else:
+                previous = previous.next
+                current = current.next
+
+        return None
 
 
 class HashTable:
@@ -22,7 +67,7 @@ class HashTable:
 
     def __init__(self, capacity):
         self.capacity = capacity
-        self.contents = [None] * capacity
+        self.contents = [LinkedList()] * capacity
 
 
     def get_num_slots(self):
@@ -85,8 +130,18 @@ class HashTable:
 
         Implement this.
         """
+        # first find slot
         slot = self.hash_index(key)
-        self.contents[slot] = HashTableEntry(key, value)
+
+        # search the LinkedList
+        current = self.contents[slot].find(key)
+        if current is not None:
+            # if found, overwrite
+            current.value = value
+            return current.value
+        else: 
+            # if not found, insert
+            return self.contents[slot].insert_at_head(HashTableEntry(key, value))
 
 
     def delete(self, key):
@@ -100,7 +155,8 @@ class HashTable:
         if not key:
             print('Provided key does not exist.')
         else:
-            self.put(key, None)
+            slot = self.hash_index(key)
+            return self.contents[slot].delete(key)
 
 
     def get(self, key):
@@ -112,12 +168,15 @@ class HashTable:
         Implement this.
         """
         if not key:
-            print('Key not found')
+            return None
         else: 
             slot = self.hash_index(key)
             
         if self.contents[slot] is not None:
-            return self.contents[slot].value
+            desired = self.contents[slot].find(key)
+
+            if desired is not None:
+                return desired.value
 
         return None
 
@@ -150,19 +209,25 @@ if __name__ == "__main__":
 
     print("")
 
-    # Test storing beyond capacity
-    for i in range(1, 13):
-        print(ht.get(f"line_{i}"))
+    # # Test storing beyond capacity
+    # for i in range(1, 13):
+    #     print(ht.get(f"line_{i}"))
 
-    # Test resizing
-    old_capacity = ht.get_num_slots()
-    ht.resize(ht.capacity * 2)
-    new_capacity = ht.get_num_slots()
+    # # Test resizing
+    # old_capacity = ht.get_num_slots()
+    # ht.resize(ht.capacity * 2)
+    # new_capacity = ht.get_num_slots()
 
-    print(f"\nResized from {old_capacity} to {new_capacity}.\n")
+    # print(f"\nResized from {old_capacity} to {new_capacity}.\n")
 
-    # Test if data intact after resizing
-    for i in range(1, 13):
-        print(ht.get(f"line_{i}"))
+    # # Test if data intact after resizing
+    # for i in range(1, 13):
+    #     print(ht.get(f"line_{i}"))
 
-    print("")
+    # print("")
+
+    test = HashTable(8)
+
+    test.put('Student', 'Jason')
+
+    print(test.get('Student'))
