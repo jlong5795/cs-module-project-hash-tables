@@ -13,3 +13,20 @@ finish running in under a minute.
 
 There's no test file for this. It's counting to 50,000, so if it
 finishes before you give up, then you're golden.
+
+
+import math
+​
+# Inverse square root
+​
+# inv_sqrt(x) = 1 / sqrt(x)
+​
+inv_sqrt = {}
+​
+​
+​
+def build_lookup_table():
+​
+    for i in range(1, 1000):
+        inv_sqrt[i] = 1 / math.sqrt(i)
+​
