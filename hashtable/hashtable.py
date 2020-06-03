@@ -96,6 +96,11 @@ class HashTable:
             new_capacity = self.capacity * 2
 
             self.resize(new_capacity)
+        if load_factor < 0.2:
+            new_capacity = self.capacity // 2
+            if new_capacity < 8:
+                new_capacity = 8
+
         
         
         return load_factor
