@@ -49,7 +49,7 @@ class LinkedList:
         while current is not None:
             if current.key == key:
                 previous.next = current.next # cuts old node out of sll
-                return current.value
+                return current
             else:
                 previous = previous.next
                 current = current.next
@@ -65,9 +65,10 @@ class HashTable:
     Implement this.
     """
 
-    def __init__(self, capacity):
+    def __init__(self, capacity=MIN_CAPACITY):
         self.capacity = capacity
-        self.contents = [LinkedList()] * capacity
+        self.load = 0
+        self.contents = [LinkedList()] * self.capacity
 
 
     def get_num_slots(self):
@@ -89,7 +90,15 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        load_factor = self.load / self.capacity
+
+        if load_factor > 0.7:
+            new_capacity = self.capacity * 2
+
+            self.resize(new_capacity)
+        
+        
+        return load_factor
 
 
     def fnv1(self, key):
@@ -141,6 +150,7 @@ class HashTable:
             return current.value
         else: 
             # if not found, insert
+            self.load += 1
             return self.contents[slot].insert_at_head(HashTableEntry(key, value))
 
 
@@ -156,6 +166,7 @@ class HashTable:
             print('Provided key does not exist.')
         else:
             slot = self.hash_index(key)
+            self.load -= 1
             return self.contents[slot].delete(key)
 
 
@@ -187,7 +198,28 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+
+        
+
+
+        # copy current data structure into a temporary "holding spot"
+        temp_storage = self.contents.copy()
+
+        self.contents = [LinkedList()] * new_capacity
+
+        # overwrite the capacity with new_capacity
+        self.capacity = new_capacity
+
+        for each in temp_storage:
+            current = each.head
+
+            # perform a 'put' on the "holding spot", moving all existing values into the storage
+            while current is not None:
+                self.put(current.key, current.value)
+                current = current.next
+
+
+
 
 
 
